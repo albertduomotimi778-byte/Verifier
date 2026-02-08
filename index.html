@@ -120,15 +120,24 @@
             }
 
             // 4. MINT THE LICENSE
-            // Use existing ID, or Generate a Timestamp ID if we just validated via Product Code
             const licenseString = rawId || `txn_${Date.now()}`;
             const validTag = btoa(licenseString + "_soulsync_secure_887"); 
 
-            // 5. INJECT STORAGE
+            // 5. INJECT STORAGE (FORCE ACTIVATION)
             try {
+                // License Keys
                 localStorage.setItem('soulsync_license_string', licenseString);
                 localStorage.setItem('soulsync_license_tag', validTag);
                 localStorage.setItem('soulsync_payment_signal', Date.now().toString());
+
+                // DIRECTLY ACTIVATE PREMIUM STATUS
+                // This ensures app sees it immediately without waiting for modal logic
+                localStorage.setItem('soulsync_premium_status', 'active');
+                
+                // Set Expiry (30 Days)
+                const expiry = Date.now() + (30 * 24 * 60 * 60 * 1000); 
+                localStorage.setItem('soulsync_sub_expiry', expiry.toString());
+
             } catch (e) {
                 console.error("Storage failed", e);
             }
@@ -166,4 +175,5 @@
         verifyTransaction();
     </script>
 </body>
-</html>                
+</html>
+                
